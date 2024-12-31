@@ -10,7 +10,7 @@ export function TodoForm({ onSubmit }) {
     setNewTask("");
   }
   return (
-    <form onSubmit={handleSubmit} className="new-item-form">
+    <form autoComplete="off" onSubmit={handleSubmit} className="new-item-form">
       <div className="for-row">
         <label htmlFor="item" className="centered">
           new task
