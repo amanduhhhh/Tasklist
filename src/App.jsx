@@ -1,8 +1,20 @@
-import { useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import "./styles.css";
 import { TodoForm } from "./TodoForm";
+import { Todolist } from "./Todolist";
+
+export const listModContext = createContext();
 export default function App() {
-  const [todolist, setTodolist] = useState([]);
+  const [todolist, setTodolist] = useState(() => {
+    const localValue = localStorage.getItem("ITEMS");
+    if (localValue === null) return [];
+    return JSON.parse(localValue);
+  });
+
+  useEffect(() => {
+    localStorage.setItem("ITEMS", JSON.stringify(todolist));
+  }),
+    [todolist];
 
   function addTask(title) {
     setTodolist((currentTodolist) => {
@@ -22,7 +34,6 @@ export default function App() {
       });
     });
   }
-
   function deleteTodo(id) {
     setTodolist((currentTodos) => {
       return currentTodos.filter((todo) => todo.id !== id);
@@ -34,28 +45,9 @@ export default function App() {
       <TodoForm onSubmit={addTask} />
       <h1 className="header">my list</h1>
       {todolist.length === 0 && <p>nothing here yet...</p>}
-      <ul className="list">
-        {todolist.map((todo) => {
-          return (
-            <li key={todo.id}>
-              <label>
-                <input
-                  type="checkbox"
-                  checked={todo.completed}
-                  onChange={(e) => toggleTodo(todo.id, e.target.checked)}
-                />
-                {todo.title}
-              </label>
-              <button
-                onClick={() => deleteTodo(todo.id)}
-                className="btn btn-danger"
-              >
-                Delete
-              </button>
-            </li>
-          );
-        })}
-      </ul>
+      <listModContext.Provider value={[toggleTodo, deleteTodo]}>
+        <Todolist todolist={todolist} />
+      </listModContext.Provider>
     </>
   );
 }

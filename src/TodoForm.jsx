@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 export function TodoForm({ onSubmit }) {
-  const [newTask, setNewTask] = useState("hello");
+  const [newTask, setNewTask] = useState("");
 
   function handleSubmit(e) {
     e.preventDefault();
